@@ -23,8 +23,13 @@ app.use(
   })
 );
 
+// passport config
+app.use(passport.initialize());
+require("./auth/googleLoginStrategy")(passport);
+
 // routes
 app.use(require("./routes/url"));
+app.use(require("./routes/userRoutes"));
 
 // connect DB
 connectDB();
