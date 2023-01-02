@@ -12,7 +12,7 @@ const createUrl = (length) => {
 };
 
 const checkIfUrlIsValid = (urlString) => {
-  var urlPattern = new RegExp(
+  const urlPattern = new RegExp(
     "^(https?:\\/\\/)?" + // validate protocol
       "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // validate domain name
       "((\\d{1,3}\\.){3}\\d{1,3}))" + // validate OR ip (v4) address
@@ -24,6 +24,13 @@ const checkIfUrlIsValid = (urlString) => {
   return !!urlPattern.test(urlString);
 };
 
+const checkIfUrlHasProtocol = (url) => {
+  const urlPattern = new RegExp(
+    "^(http(s)://.)" // validate protocol
+  );
+  return !!urlPattern.test(url);
+};
+
 const checkIfUrlIsUnique = async (short_url) => {
   const result = await Url.findOne({ short: short_url });
   return result;
@@ -33,4 +40,5 @@ module.exports = {
   createUrl,
   checkIfUrlIsValid,
   checkIfUrlIsUnique,
+  checkIfUrlHasProtocol,
 };
