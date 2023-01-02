@@ -23,6 +23,9 @@ app.use(
   })
 );
 
+// routes
+app.use(require("./routes/url"));
+
 // connect DB
 connectDB();
 
