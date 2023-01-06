@@ -25,6 +25,7 @@ app.use(
 
 // passport config
 app.use(passport.initialize());
+require("./auth/passport")(passport);
 require("./auth/googleLoginStrategy")(passport);
 
 // routes

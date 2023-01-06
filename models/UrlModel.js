@@ -5,6 +5,10 @@ const urlSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
   short: {
     type: String,
     required: true,
@@ -12,6 +16,10 @@ const urlSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now,
+  },
+  owner: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
   },
   clicks: [
     {
