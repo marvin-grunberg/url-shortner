@@ -19,14 +19,14 @@ router.get(
   async (req, res) => {
     const payload = {
       email: req.user.email,
+      id: req.user._id,
     };
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
       { expiresIn: "30d" },
       (err, token) => {
-        // res.redirect(`http://localhost:3000/login-success/${token}`);
-        console.log({ token });
+        res.redirect(`http://localhost:3000/login-success?token=${token}`);
         res.json({ success: true });
       }
     );

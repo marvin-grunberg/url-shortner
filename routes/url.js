@@ -77,8 +77,6 @@ router.post(
 router.get("/:url", async (req, res) => {
   const url = await Url.findOne({ short: req.params.url });
 
-  console.log(req);
-
   if (url) {
     url.clicks.push({
       date: Date.now(),
@@ -91,5 +89,37 @@ router.get("/:url", async (req, res) => {
 
   return res.status(400).json({ foo: "no url found" });
 });
+
+// ##### GET USER DATA ######
+router.get(
+  "/api/user",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const urls = await Url.find({ owner: req.user._id });
+      return res.json({ success: true, response: urls });
+    } catch (err) {
+      return res.status(400).json({ foo: "no url found" });
+    }
+  }
+);
+
+// ##### DELETE URL ######
+router.delete(
+  "/api/url/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const result = await Url.deleteOne({
+        _id: req.params.id,
+        owner: req.user._id,
+      });
+
+      return res.json({ success: true });
+    } catch (err) {
+      return res.status(400).json({ foo: "no url found" });
+    }
+  }
+);
 
 module.exports = router;
