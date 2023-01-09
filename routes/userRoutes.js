@@ -26,7 +26,9 @@ router.get(
       process.env.JWT_SECRET,
       { expiresIn: "30d" },
       (err, token) => {
-        res.redirect(`http://localhost:3000/login-success?token=${token}`);
+        res.redirect(
+          `${process.env.GOOGLE_AUTH_REDIRECT}/login-success?token=${token}`
+        );
         res.json({ success: true });
       }
     );
