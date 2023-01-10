@@ -29,7 +29,7 @@ require("./auth/passport")(passport);
 require("./auth/googleLoginStrategy")(passport);
 
 // routes
-app.use(require("./routes/url"));
+app.use(require("./routes/urlRoutes"));
 app.use(require("./routes/userRoutes"));
 
 // connect DB

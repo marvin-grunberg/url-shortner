@@ -17,11 +17,10 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { url } = req.body;
-    const isValidUrl = checkIfUrlIsValid(url);
-    const hasProtocall = checkIfUrlHasProtocol(url);
 
     // check if the url is valid
-    if (!isValidUrl) return res.status(400).json({ foo: "invalid url" });
+    const isValidUrl = checkIfUrlIsValid(url);
+    if (!isValidUrl) return res.status(400).json({ err_msg: "invalid url" });
 
     try {
       // create unique url
@@ -38,11 +37,12 @@ router.post(
       } while (isUnique === false);
 
       // append protocall if needed
+      const hasProtocall = checkIfUrlHasProtocol(url);
       const originalUrl = hasProtocall
         ? req.body.url
         : `https://${req.body.url}`;
 
-      // get html data
+      // get title from url
       const html = await axios(originalUrl);
       const $ = cheerio.load(html.data);
 
@@ -67,16 +67,17 @@ router.post(
         result: result,
       });
     } catch (err) {
-      return res.status(400).json({ foo: "error", err });
+      return res.status(400).json({ err_msg: "error", err });
     }
   }
 );
 
 // ##### GET URL ######
-
 router.get("/:url", async (req, res) => {
+  // get url data in database
   const url = await Url.findOne({ short: req.params.url });
 
+  // register click
   if (url) {
     url.clicks.push({
       date: Date.now(),
@@ -84,10 +85,11 @@ router.get("/:url", async (req, res) => {
 
     await url.save();
 
+    //  redirect user to original url
     return res.status(301).redirect(url.url);
   }
 
-  return res.status(400).json({ foo: "no url found" });
+  return res.status(400).json({ err_msg: "no url found" });
 });
 
 // ##### GET USER DATA ######
@@ -96,10 +98,11 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
+      // get all urls from user
       const urls = await Url.find({ owner: req.user._id });
       return res.json({ success: true, response: urls });
     } catch (err) {
-      return res.status(400).json({ foo: "no url found" });
+      return res.status(400).json({ err_msg: "no data found" });
     }
   }
 );
@@ -110,7 +113,7 @@ router.delete(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const result = await Url.deleteOne({
+      await Url.deleteOne({
         _id: req.params.id,
         owner: req.user._id,
       });

@@ -9,7 +9,7 @@ router.get(
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
-// the callback after google has authenticated the user
+/* ########## HANDLE AUTH GOOGLE CALLBACK ##########*/
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
