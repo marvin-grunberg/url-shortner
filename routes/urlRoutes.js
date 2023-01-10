@@ -16,19 +16,16 @@ router.post(
   "/url",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { url } = req.body;
-
     // check if the url is valid
-    const isValidUrl = checkIfUrlIsValid(url);
+    const isValidUrl = checkIfUrlIsValid(req.body.url);
+
+    // send error is url is invalid
     if (!isValidUrl) return res.status(400).json({ err_msg: "invalid url" });
 
     try {
       // create unique url
       let url;
       url = createUrl(7);
-
-      // check if url is unique
-      isUnique = (await checkIfUrlIsUnique(url)) === null;
 
       // is url is not unique generate new url and check is new url is unique
       do {
@@ -37,7 +34,7 @@ router.post(
       } while (isUnique === false);
 
       // append protocall if needed
-      const hasProtocall = checkIfUrlHasProtocol(url);
+      const hasProtocall = checkIfUrlHasProtocol(req.body.url);
       const originalUrl = hasProtocall
         ? req.body.url
         : `https://${req.body.url}`;
